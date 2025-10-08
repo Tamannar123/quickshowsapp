@@ -96,23 +96,25 @@ res.json({success:true , shows:Array.from(uniqueShows)})
   }
 }
 //API to get a single show from the database 
-export const getShow = async (res,req)=>{
-  try{
-const {movieId} = req.params;
-// get all upcoming shows 
-const shows = await  Show.find({movie : movieId,showDateTime:{$lte:new Date()}})
-const movie = await Movie.findById(movieId);
-const dateTime ={};
-shows.forEach((show)=>{
-  const  date = show.showDateTime.toISOString().split("T")[0];
-  if(!dateTime[date]){
-    dateTime[date]=[]
+export const getShow = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    // get all upcoming shows 
+    const shows = await Show.find({ movie: movieId, showDateTime: { $gte: new Date() } });
+    const movie = await Movie.findById(movieId);
+
+    const dateTime = {};
+    shows.forEach((show) => {
+      const date = show.showDateTime.toISOString().split("T")[0];
+      if (!dateTime[date]) {
+        dateTime[date] = [];
+      }
+      dateTime[date].push({ time: show.showDateTime, showId: show._id });
+    });
+
+    res.json({ success: true, movie, dateTime });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
   }
-  dateTime[date].push({time: show.showDateTime, showId:show._id})
-})
-res.json({success:true,movie,dateTime})
-  }catch(error){
-      console.log(error);
-  res.json({success: false, message:error.message})
-  }
-}
+};

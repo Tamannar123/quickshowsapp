@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUserBookings } from '../controllers/bookingController.js';
+import {getUserBookings} from '../controllers/bookingController.js'
 import { updateFavorite, getFavorite } from '../controllers/favoriteController.js';
 
 
