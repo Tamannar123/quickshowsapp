@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 
 import { addShow, getNowPlayingMovies, getShow, getShows } from "../controllers/Showcontroller.js";
 import { protectAdmin } from "../middleware/auth.js";

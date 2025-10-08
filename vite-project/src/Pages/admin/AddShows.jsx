@@ -4,8 +4,11 @@ import Loading from '../../Components/Loading'
 import Title from '../../Components/admin/Title'
 import { CheckIcon, Trash2Icon, StarIcon } from 'lucide-react'
 import KConverter from '../../Lib/KConverter'
+import { useAppContext } from '../../context/AppContext'
 
 const AddShows = () => {
+
+  const {axios ,getToken,user,image_base_url} = useAppContext()
   const currency = import.meta.env.VITE_CURRENCY
   const [nowPlayingMovies, setNowPlayingMovies] = useState([])
   const [selectedMovie, setSelectedMovie] = useState(null)
@@ -15,7 +18,17 @@ const AddShows = () => {
 
   // fetch movies (dummy for now)
   const fetchNowPlayingMovies = async () => {
-    setNowPlayingMovies(dummyShowsData)
+    try{
+
+      const{data}=await axios.get('/api/movies/now-playing',{
+        headers:{Authorization:`Bearer ${await getToken()}`}
+      })
+      if(data.success){
+        setNowPlayingMovies(data.movies)
+      }
+    }catch(error){
+      console.error('Error fetching now playing movies:', error )
+    }
   }
 
   useEffect(() => {
@@ -51,7 +64,13 @@ const AddShows = () => {
         [date]: filteredTimes,
       }
     })
-  }
+  };
+
+  useEffect(() => {
+    if(user){
+      fetchNowPlayingMovies();
+    }
+  }, [user]);
 
   return nowPlayingMovies.length > 0 ? (
     <>
@@ -69,7 +88,7 @@ const AddShows = () => {
             >
               <div className="relative rounded-lg overflow-hidden">
                 <img
-                  src={movie.poster_path}
+                  src={image_base_url+movie.poster_path}
                   alt={movie.title}
                   className="w-full object-cover brightness-90"
                 />
