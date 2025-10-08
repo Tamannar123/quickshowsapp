@@ -100,7 +100,7 @@ export const getShow = async (res,req)=>{
   try{
 const {movieId} = req.params;
 // get all upcoming shows 
-const shows = await  Show.find({movie : movieId,showDateTime:{$gte:new Date()}})
+const shows = await  Show.find({movie : movieId,showDateTime:{$lte:new Date()}})
 const movie = await Movie.findById(movieId);
 const dateTime ={};
 shows.forEach((show)=>{
